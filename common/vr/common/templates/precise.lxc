@@ -22,7 +22,5 @@ lxc.mount.entry = none %(proc_path)s/sys     sysfs  defaults 0 0
 # allow .pyc files (for example) to be created.
 lxc.mount.entry = %(build_path)s %(proc_path)s/app none bind 0 0
 
-# We want apparmor eventually, but we need some time to dig into the details
-# and prevent things like this:
-# "lxc-start: No such file or directory - failed to change apparmor profile to lxc-container-default"
 lxc.aa_profile = unconfined
+lxc.console = none
