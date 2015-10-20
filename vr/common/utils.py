@@ -1,4 +1,4 @@
-from __future__ import print_function
+from __future__ import print_function, unicode_literals
 
 import os
 import subprocess
@@ -11,6 +11,7 @@ import errno
 from datetime import datetime
 import textwrap
 import contextlib
+import functools
 
 try:
     import pwd
@@ -238,18 +239,21 @@ def get_lxc_version():
     """ Asks the current host what version of LXC it has.  Returns it as a
     string. If LXC is not installed, raises subprocess.CalledProcessError"""
 
+    runner = functools.partial(
+        subprocess.check_output,
+        stderr=subprocess.STDOUT,
+    )
+
     # Old LXC had an lxc-version executable, and prefixed its result with
     # "lxc version: "
     try:
-        result = subprocess.check_output(['lxc-version'],
-                                         stderr=subprocess.STDOUT).rstrip()
+        result = runner(['lxc-version']).rstrip()
         return result.replace("lxc version: ", "")
     except (OSError, subprocess.CalledProcessError):
         pass
 
     # New LXC instead has a --version option on most installed executables.
-    return subprocess.check_output(['lxc-start', '--version'],
-                                   stderr=subprocess.STDOUT).rstrip()
+    return runner(['lxc-start', '--version']).rstrip()
 
 
 def get_lxc_network_config(version):
