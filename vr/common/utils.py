@@ -242,6 +242,7 @@ def get_lxc_version():
     runner = functools.partial(
         subprocess.check_output,
         stderr=subprocess.STDOUT,
+        universal_newlines=True,
     )
 
     # Old LXC had an lxc-version executable, and prefixed its result with
