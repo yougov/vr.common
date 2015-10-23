@@ -113,6 +113,7 @@ def run(command, verbose=False):
         shell=True,
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
+        universal_newlines=True,
     )
 
     v_print("run:", command)
