@@ -146,9 +146,9 @@ class RedisCacheTests(unittest.TestCase):
     def setUp(self):
         self.server = FakeRPC()
         self.supervisor = self.server.supervisor
-        self.redis = redis.StrictRedis(**parse_redis_url('redis://localhost:6379/15'))
-        self.host = Host('somewhere', self.server,
-                         redis_or_url=self.redis)
+        params = parse_redis_url('redis://localhost:6379/15')
+        self.redis = redis.StrictRedis(**params)
+        self.host = Host('somewhere', self.server, redis_or_url=self.redis)
 
     def tearDown(self):
         # self.redis.delete(self.host.cache_key)
