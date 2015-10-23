@@ -35,6 +35,7 @@ params = dict(
 
     tests_require=[
         'pytest',
+        'redis',
     ],
 )
 
