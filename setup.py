@@ -28,6 +28,14 @@ params = dict(
             'suds==0.4',
         ],
     },
+
+    setup_requires=[
+        'pytest-runner',
+    ],
+
+    tests_require=[
+        'pytest',
+    ],
 )
 
 if __name__ == '__main__':
