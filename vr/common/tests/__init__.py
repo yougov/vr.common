@@ -1,7 +1,8 @@
 import os
 import tempfile
 import shutil
-import xmlrpclib
+
+from six.moves import xmlrpc_client
 
 from vr.common import repo
 from vr.common.utils import run
@@ -59,7 +60,7 @@ class FakeSupervisor(object):
         except KeyError:
             # Raise exception like supervisor would when asked to return data
             # on nonexistent Proc.
-            raise xmlrpclib.Fault(10, 'BAD_NAME: %s' % name)
+            raise xmlrpc_client.Fault(10, 'BAD_NAME: %s' % name)
 
     def getAllProcessInfo(self):
         self._fake_fault()
