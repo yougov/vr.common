@@ -85,7 +85,9 @@ class CommandException(Exception):
 class CommandResult(object):
     def __init__(self, command, output, status_code):
         self.command = command
-        self.output = six.text_type(output, 'ascii', 'replace')
+        if not isinstance(output, six.text_type):
+            output = six.text_type(output, 'ascii', 'replace')
+        self.output = output
         self.status_code = status_code
 
     def __repr__(self):
