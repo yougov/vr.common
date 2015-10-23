@@ -4,7 +4,7 @@ import setuptools
 
 params = dict(
     name='vr.common',
-    version='4.1.2',
+    version='4.1.3',
     author='Brent Tubbs',
     author_email='brent.tubbs@gmail.com',
     url='https://bitbucket.org/yougov/velociraptor',
@@ -31,6 +31,7 @@ params = dict(
 
     setup_requires=[
         'pytest-runner',
+        'setuptools_scm',
     ],
 
     tests_require=[
