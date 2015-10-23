@@ -148,6 +148,10 @@ class RedisCacheTests(unittest.TestCase):
         self.supervisor = self.server.supervisor
         params = parse_redis_url('redis://localhost:6379/15')
         self.redis = redis.StrictRedis(**params)
+        try:
+            self.redis.ping()
+        except:
+            pytest.skip("Need redis bound on 6379")
         self.host = Host('somewhere', self.server, redis_or_url=self.redis)
 
     def tearDown(self):
