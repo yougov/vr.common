@@ -1,11 +1,13 @@
 import os
 import tempfile
 import shutil
+import tarfile
 
 from six.moves import xmlrpc_client
 
+import pkg_resources
+
 from vr.common import repo
-from vr.common.utils import run
 
 # A fake Supervisor xmlrpc interface.
 class FakeSupervisor(object):
@@ -78,19 +80,29 @@ class tmprepo(object):
     cd-ing back where you were when it's done.
     """
     def __init__(self, tarball, vcs_type, repo_class=None):
-        # Repo tarballs must be in the same directory as this file.
-        here = os.path.dirname(os.path.abspath(__file__))
-        self.tarball = os.path.join(here, tarball)
+        self.tarball = tarball
         self.vcs_type = vcs_type
         self.orig_path = os.getcwd()
         self.repo_class = repo_class or repo.Repo
 
+    @staticmethod
+    def strip_components(members, n):
+        """
+        Given a sequence of members from a tarfile,
+        strip the first n components from the path.
+        """
+        for member in members:
+            names = member.name.split('/')[n:]
+            member.name = '/'.join(names)
+            if member.name:
+                yield member
+
     def __enter__(self):
         self.temp_path = tempfile.mkdtemp()
+        stream = pkg_resources.resource_stream(__name__, self.tarball)
+        tar_ob = tarfile.open(fileobj=stream)
         os.chdir(self.temp_path)
-        cmd = 'tar -zxf %s --strip-components 1' % self.tarball
-        result = run(cmd)
-        result.raise_for_status()
+        tar_ob.extractall('.', self.strip_components(tar_ob.getmembers(), 1))
         return self.repo_class('./', vcs_type=self.vcs_type)
 
     def __exit__(self, type, value, traceback):
