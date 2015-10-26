@@ -615,6 +615,14 @@ class BaseResource(object):
         resp.raise_for_status()
         return resp
 
+    @classmethod
+    def load_all(cls, vr):
+        """
+        Create instances of all objects found
+        """
+        ob_docs = vr.load(cls.base)['objects']
+        return [cls(vr, ob) for ob in ob_docs]
+
 
 class Swarm(BaseResource):
     """
@@ -646,15 +654,6 @@ class Swarm(BaseResource):
         }))[0]
 
         return cls(vr, doc)
-
-    @classmethod
-    def load_all(cls, vr):
-        """
-        Load all swarms
-        """
-        swarm_obs = vr.load(cls.base)['objects']
-        swarms = [cls(vr, ob) for ob in swarm_obs]
-        return swarms
 
     def dispatch(self, **changes):
         """
