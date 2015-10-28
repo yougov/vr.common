@@ -125,7 +125,7 @@ def run(command, verbose=False):
         return line
 
     output = ''.join(map(log_and_yield, p.stdout))
-    status_code = p.poll()
+    status_code = p.wait()
 
     return CommandResult(command, output, status_code)
 
