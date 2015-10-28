@@ -132,7 +132,7 @@ class Repo(object):
 
     @property
     def version(self):
-        method = getattr(self, '_version_' + self.vcs_type, lambda: None)
+        method = getattr(self, '_version_' + self.vcs_type)
         return method()
 
     def _version_hg(self):
