@@ -132,10 +132,14 @@ class Repo(object):
 
     @property
     def version(self):
-        if self.vcs_type == 'hg':
+        method = getattr(self, '_version_' + self.vcs_type, lambda: None)
+        return method()
+
+    def _version_hg(self):
             r = self.run('hg identify -i %s' % self.folder)
             return r.output.rstrip('+\n')
-        elif self.vcs_type == 'git':
+
+    def _version_git(self):
             with chdir(self.folder):
                 r = self.run('git rev-parse HEAD')
             return r.output.rstrip()
