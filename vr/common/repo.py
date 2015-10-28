@@ -136,13 +136,13 @@ class Repo(object):
         return method()
 
     def _version_hg(self):
-            r = self.run('hg identify -i %s' % self.folder)
-            return r.output.rstrip('+\n')
+        r = self.run('hg identify -i %s' % self.folder)
+        return r.output.rstrip('+\n')
 
     def _version_git(self):
-            with chdir(self.folder):
-                r = self.run('git rev-parse HEAD')
-            return r.output.rstrip()
+        with chdir(self.folder):
+            r = self.run('git rev-parse HEAD')
+        return r.output.rstrip()
 
     def __repr__(self):
         values = {'classname': self.__class__.__name__,
