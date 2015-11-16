@@ -125,7 +125,7 @@ class Host(object):
         try:
             proc_list = self.supervisor.getAllProcessInfo()
         except Exception:
-            log.error("Failed to connect to %s", self)
+            log.exception("Failed to connect to %s", self)
             return {}
 
         # getAllProcessInfo returns a list of dicts.  Reshape that into a dict
@@ -302,18 +302,26 @@ class Proc(object):
             self.host.supervisor.startProcess(self.name)
         except xmlrpc_client.Fault as f:
             if f.faultString == 'ALREADY_STARTED':
-                pass
+                log.warning("Process %s already started", self.name)
             else:
+                log.exception("Failed to start %s", self.name)
                 raise
+        except Exception:
+            log.exception("Failed to start %s", self.name)
+            raise
 
     def stop(self):
         try:
             self.host.supervisor.stopProcess(self.name)
         except xmlrpc_client.Fault as f:
             if f.faultString == 'NOT_RUNNING':
-                pass
+                log.warning("Process %s not running", self.name)
             else:
+                log.exception("Failed to stop %s", self.name)
                 raise
+        except Exception:
+            log.exception("Failed to stop %s", self.name)
+            raise
 
     def restart(self):
         self.stop()
