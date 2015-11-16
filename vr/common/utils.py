@@ -121,6 +121,11 @@ def run(command, verbose=False):
     v_print("run:", command)
 
     def log_and_yield(line):
+        if six.PY2:
+            # p.stdout is a PIPE, i.e. a file, opened in 'rb'. Reading
+            # from it returns a bytestring in Py2, that has to be
+            # decoded
+            line = line.decode('utf8', 'replace')
         v_print(line)
         return line
 
