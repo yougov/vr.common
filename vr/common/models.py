@@ -379,6 +379,7 @@ class ProcData(ConfigData):
     ]
 
     _optional = [
+        'app_folder',
         'build_url',
         'group',
         'cmd',
