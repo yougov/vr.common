@@ -4,7 +4,7 @@ import setuptools
 
 params = dict(
     name='vr.common',
-    version='4.2.0',
+    version='4.3.0',
     author='Brent Tubbs',
     author_email='brent.tubbs@gmail.com',
     url='https://bitbucket.org/yougov/velociraptor',
