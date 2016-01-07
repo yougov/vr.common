@@ -13,6 +13,7 @@ VR_ROOT = '/apps'
 BUILDS_ROOT = VR_ROOT + '/builds'
 PROCS_ROOT = VR_ROOT + '/procs'
 RELEASES_ROOT = VR_ROOT + '/releases'
+IMAGES_ROOT = VR_ROOT + '/images'
 
 
 def get_container_path(settings):
@@ -54,4 +55,3 @@ def get_buildfile_path(settings):
     """
     base = os.path.basename(settings.build_url)
     return os.path.join(BUILDS_ROOT, base)
-
