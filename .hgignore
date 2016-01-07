@@ -35,3 +35,4 @@ celerybeat-schedule
 celerybeat.pid
 TODO
 TAGS
+vr/static/
