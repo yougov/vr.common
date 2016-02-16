@@ -562,7 +562,9 @@ class Velociraptor(object):
     def load(self, path):
         url = self._build_url(path)
         url += '?format=json&limit=9999'
-        return self.session.get(url).json()
+        resp = self.session.get(url)
+        resp.raise_for_status()
+        return resp.json()
 
     def query(self, path, query):
         url = self._build_url(path)
