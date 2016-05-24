@@ -627,11 +627,11 @@ class BaseResource(object):
         return resp
 
     @classmethod
-    def load_all(cls, vr):
+    def load_all(cls, vr, params=None):
         """
         Create instances of all objects found
         """
-        ob_docs = vr.load(cls.base)['objects']
+        ob_docs = vr.query(cls.base, params)
         return [cls(vr, ob) for ob in ob_docs]
 
 
