@@ -490,7 +490,7 @@ class QueryResult(Iterable):
         resp.raise_for_status()
         return resp.json()
 
-    def next(self):
+    def __next__(self):
         if not self._doc:
             self._doc = self.load()
 
@@ -503,12 +503,15 @@ class QueryResult(Iterable):
             if meta.get('next'):
                 self._doc = self.load(meta['next'])
                 self._index = 0
-                return self.next()
+                return next(self)
             raise StopIteration()
 
         result = objects[self._index]
         self._index += 1
         return result
+
+    if six.PY2:
+        next = __next__
 
 
 class Velociraptor(object):
