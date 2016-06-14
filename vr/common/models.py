@@ -12,8 +12,6 @@ import re
 import socket
 import time
 
-log = logging.getLogger(__name__)
-
 from six.moves import urllib, xmlrpc_client, range
 
 import six
@@ -37,6 +35,8 @@ except ImportError:
             return None
 
 from vr.common.utils import utcfromtimestamp, parse_redis_url
+
+log = logging.getLogger(__name__)
 
 
 class TimeoutTransport(xmlrpc_client.Transport):
