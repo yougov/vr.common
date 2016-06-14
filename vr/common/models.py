@@ -1,17 +1,20 @@
 from datetime import datetime
 from collections import Iterable
 import collections
-import getpass
-import re
-import socket
-import os
-import logging
 import copy
 import functools
+import getpass
 import json
+import logging
 import operator
+import os
+import re
+import socket
+import time
 
-from six.moves import urllib, xmlrpc_client
+log = logging.getLogger(__name__)
+
+from six.moves import urllib, xmlrpc_client, range
 
 import six
 import yaml
@@ -35,7 +38,36 @@ except ImportError:
 
 from vr.common.utils import utcfromtimestamp, parse_redis_url
 
-log = logging.getLogger(__name__)
+
+class TimeoutTransport(xmlrpc_client.Transport):
+
+    def __init__(self, timeout=30, *l, **kw):
+        xmlrpc_client.Transport.__init__(self, *l, **kw)
+        self.timeout = timeout
+
+    def make_connection(self, *args, **kwargs):
+        conn = xmlrpc_client.Transport.make_connection(self, *args, **kwargs)
+        conn.timeout = self.timeout
+        return conn
+
+
+def _retry(n, f, *args, **kwargs):
+    '''Try to call f(*args, **kwargs) "n" times before giving up. Wait
+    2**n seconds before retries.'''
+
+    for i in range(n):
+        try:
+            return f(*args, **kwargs)
+        except Exception as exc:
+            if i == n - 1:
+                log.error(
+                    '%s permanently failed with %r', f.__name__, exc)
+                raise
+            else:
+                log.warning(
+                    '%s attempt #%d failed with %r', f.__name__, i, exc)
+                time.sleep(2 ** i)
+    raise RuntimeError('Should never get here!')
 
 
 class Host(object):
@@ -66,22 +98,30 @@ class Host(object):
         self.username = supervisor_username
         self.password = supervisor_password
 
-        # Allow passing in an RPC connection, or a port number for making one
+        self._init_supervisor_rpc(rpc_or_port)
+        self.redis = self._init_redis(redis_or_url)
+        self.cache_key = ':'.join([redis_cache_prefix, name])
+        self.cache_lifetime = redis_cache_lifetime
+
+    def _init_supervisor_rpc(self, rpc_or_port):
+        '''Initialize supervisor RPC.
+
+        Allow passing in an RPC connection, or a port number for
+        making one.
+
+        '''
         if isinstance(rpc_or_port, int):
             if self.username:
                 leader = 'http://{self.username}:{self.password}@'
             else:
                 leader = 'http://'
-            tmpl = leader + '{name}:{port}'
-            url = tmpl.format(self=self, name=name, port=rpc_or_port)
-            self.rpc = xmlrpc_client.Server(url)
+            tmpl = leader + '{self.name}:{port}'
+            url = tmpl.format(self=self, port=rpc_or_port)
+            self.rpc = xmlrpc_client.ServerProxy(
+                url, transport=TimeoutTransport())
         else:
             self.rpc = rpc_or_port
         self.supervisor = self.rpc.supervisor
-
-        self.redis = self._init_redis(redis_or_url)
-        self.cache_key = ':'.join([redis_cache_prefix, name])
-        self.cache_lifetime = redis_cache_lifetime
 
     @staticmethod
     def _init_redis(redis_spec):
@@ -116,8 +156,10 @@ class Host(object):
             raise ProcError('host %s has no proc named %s' % (self.name, name))
 
     def _get_and_cache_procs(self):
+
         try:
-            proc_list = self.supervisor.getAllProcessInfo()
+            # Retry few times before giving up
+            proc_list = _retry(3, self.supervisor.getAllProcessInfo)
         except Exception:
             log.exception("Failed to connect to %s", self)
             return {}
