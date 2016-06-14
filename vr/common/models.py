@@ -1,23 +1,17 @@
+from datetime import datetime
+from collections import Iterable
+import collections
 import getpass
 import re
 import socket
 import os
-import collections
 import logging
 import copy
 import functools
 import json
 import operator
 
-from datetime import datetime
-from collections import Iterable
-
-from six.moves import urllib
-
-try:
-    import xmlrpc.client as xmlrpc_client
-except ImportError:
-    import xmlrpclib as xmlrpc_client
+from six.moves import urllib, xmlrpc_client
 
 import six
 import yaml
@@ -34,7 +28,7 @@ try:
     import keyring
 except ImportError:
     # stub out keyring
-    class keyring:
+    class keyring(object):
         @staticmethod
         def get_password(*args, **kwargs):
             return None
@@ -132,7 +126,8 @@ class Host(object):
         # of dicts, keyed by proc name.
         proc_dict = {d['name']: d for d in proc_list}
         if self.redis:
-            # Use pipeline to do hash clear, set, and expiration in same redis call
+            # Use pipeline to do hash clear, set, and expiration in
+            # same redis call
             with self.redis.pipeline() as pipe:
 
                 # First clear all existing data in the hash
@@ -174,16 +169,16 @@ class Proc(object):
     hostname and a dict of data structured like the one you get back from
     Supervisor's XML RPC interface.
     """
-    # FIXME: I'm kind of an ugly grab bag of information about a proc, some of
-    # it used for initial setup, and some of it the details returned by
-    # supervisor at runtime.  In the future, I'd like to have just 3 main
-    # attributes:
-        # 1. A 'ProcData' instance holding all the info used to create the
-        # proc.
-        # 2. A 'supervisor' thing that just holds exactly what supervisor
-        # returns.
-        # 3. A 'resources' thing showing how much RAM and CPU this proc is
-        # using.
+    # FIXME: I'm kind of an ugly grab bag of information about a proc,
+    # some of it used for initial setup, and some of it the details
+    # returned by supervisor at runtime.  In the future, I'd like to
+    # have just 3 main attributes:
+    # 1. A 'ProcData' instance holding all the info used to create the
+    # proc.
+    # 2. A 'supervisor' thing that just holds exactly what supervisor
+    # returns.
+    # 3. A 'resources' thing showing how much RAM and CPU this proc is
+    # using.
     # The Supervisor RPC plugin in vr.agent supports returning all of this info
     # in one RPC call.  We should refactor this class to use that, and the
     # cache to use that, and the JS frontend to use that structure too.  Not a
@@ -532,7 +527,7 @@ class Velociraptor(object):
         Override with 'VELOCIRAPTOR_URL'
         """
         try:
-            name, aliaslist, addresslist = socket.gethostbyname_ex('deploy')
+            name, _aliaslist, _addresslist = socket.gethostbyname_ex('deploy')
         except socket.gaierror:
             name = 'deploy'
         fallback = 'https://{name}/'.format(name=name)
@@ -643,10 +638,6 @@ class Swarm(BaseResource):
     A VR Swarm
     """
     base = '/api/v1/swarms/'
-
-    def __init__(self, vr, obj):
-        self._vr = vr
-        self.__dict__.update(obj)
 
     def __lt__(self, other):
         return self.name < other.name
