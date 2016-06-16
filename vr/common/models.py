@@ -783,10 +783,6 @@ class Squad(BaseResource):
     base = '/api/v1/squads/'
 
 
-class OSImage(BaseResource):
-    base = '/api/v1/squads/'
-
-
 class Release(BaseResource):
     base = '/api/v1/releases/'
 
