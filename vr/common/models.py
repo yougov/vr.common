@@ -694,13 +694,14 @@ class Swarm(BaseResource):
     @classmethod
     def by_name(cls, vr, swarm_name):
         app_name, config_name, proc_name = swarm_name.split('-')
-        doc = list(vr.query(cls.base, {
-            'app_name': app_name,
+        docs = list(vr.query(cls.base, {
+            'app__name': app_name,
             'config_name': config_name,
             'proc_name': proc_name,
-        }))[0]
+        }))
+        assert len(docs) == 1, 'Found too many swarms: {}'.format(len(docs))
 
-        return cls(vr, doc)
+        return cls(vr, docs[0])
 
     def dispatch(self, **changes):
         """
