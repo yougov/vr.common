@@ -38,10 +38,13 @@ from vr.common.utils import utcfromtimestamp, parse_redis_url
 
 log = logging.getLogger(__name__)
 
+SUPERVISOR_RPC_TIMEOUT_SECS = 10
+SUPERVISOR_RPC_N_RETRIES = 2
+
 
 class TimeoutTransport(xmlrpc_client.Transport):
 
-    def __init__(self, timeout=30, *l, **kw):
+    def __init__(self, timeout=SUPERVISOR_RPC_TIMEOUT_SECS, *l, **kw):
         xmlrpc_client.Transport.__init__(self, *l, **kw)
         self.timeout = timeout
 
@@ -159,7 +162,8 @@ class Host(object):
 
         try:
             # Retry few times before giving up
-            proc_list = _retry(3, self.supervisor.getAllProcessInfo)
+            proc_list = _retry(
+                SUPERVISOR_RPC_N_RETRIES, self.supervisor.getAllProcessInfo)
         except Exception:
             log.exception("Failed to connect to %s", self)
             return {}
