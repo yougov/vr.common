@@ -20,7 +20,7 @@ params = dict(
         'utc',
         'requests',
         'PyYAML>=3.10',
-        'sseclient==0.0.8',
+        'sseclient==0.0.11',
     ],
 
     extras_require={
