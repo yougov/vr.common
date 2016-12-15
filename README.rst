@@ -5,8 +5,8 @@
 
 .. image:: https://img.shields.io/pypi/dm/vr.common.svg
 
-.. image:: https://img.shields.io/travis/jaraco/vr.common/master.svg
-   :target: http://travis-ci.org/jaraco/vr.common
+.. image:: https://img.shields.io/travis/yougov/vr.common/master.svg
+   :target: http://travis-ci.org/yougov/vr.common
 
 
 License
