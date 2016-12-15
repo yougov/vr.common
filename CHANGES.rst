@@ -1,3 +1,8 @@
+4.8.2
+=====
+
+Fixed ImportError in 'vr.common.balancer.varnish'.
+
 4.8
 ===
 

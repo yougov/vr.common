@@ -2,7 +2,7 @@ import errno
 import posixpath
 import re
 
-from deployment.balancer.base import SshBasedBalancer
+from .base import SshBasedBalancer
 
 BACKEND_TPL = '{.backend={.host="%(host)s"; .port="%(port)s";}}'
 
