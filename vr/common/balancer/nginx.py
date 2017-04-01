@@ -40,9 +40,10 @@ class NginxBalancer(base.SshBasedBalancer):
     """
 
     def __init__(self, config):
-        self.include_dir = config.get('include_dir',
-                                      '/etc/nginx/sites-enabled/')
-        self.reload_cmd = config.get('reload_cmd', '/etc/init.d/nginx reload')
+        self.include_dir = config.get(
+            'include_dir', '/etc/nginx/sites-enabled/')
+        self.reload_cmd = config.get(
+            'reload_cmd', '/usr/sbin/nginx -t && /etc/init.d/nginx reload')
         super(NginxBalancer, self).__init__(config)
 
     def _get_host_nodes(self, host, pool):
