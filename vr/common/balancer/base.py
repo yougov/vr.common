@@ -12,7 +12,7 @@ import paramiko
 from django.conf import settings
 
 
-six.add_metaclass(abc.ABCMeta)
+@six.add_metaclass(abc.ABCMeta)
 class Balancer(object):
 
     @abc.abstractmethod
