@@ -103,10 +103,11 @@ class SshBasedBalancer(Balancer):
             if nodes is None:
                 nodes = host_nodes
             elif host_nodes != nodes:
-                warnings.warn('Host %s has nodes %s for pool %s, but other '
-                              'hosts have %s' % (host, pool,
-                                                 str(list(host_nodes)),
-                                                 str(list(nodes))))
+                tmpl = (
+                    'Host %s has nodes %s for pool %s, but other hosts have %s'
+                )
+                msg = tmpl % (host, pool, list(host_nodes), list(nodes))
+                warnings.warn(msg)
                 nodes = nodes.union(host_nodes)
         if nodes:
             return list(nodes)
