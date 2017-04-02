@@ -75,9 +75,8 @@ class SshBasedBalancer(Balancer):
         # read file with SFTP
         sftp = con.open_sftp()
         # write file to temporary location
-        tmppath = posixpath.join(self.tmpdir,
-                                 ''.join(random.choice(string.lowercase) for x
-                                         in range(10)))
+        name = ''.join(random.choice(string.lowercase) for x in range(10))
+        tmppath = posixpath.join(self.tmpdir, name)
         f = sftp.open(tmppath, 'wb')
         f.write(contents)
         f.close()
