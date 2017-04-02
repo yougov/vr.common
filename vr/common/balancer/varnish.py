@@ -16,10 +16,7 @@ director %(pool)s round-robin {
 
 def _render_backend(node):
     host, port = node.split(':')
-    return BACKEND_TPL % {
-        'host': host,
-        'port': port,
-    }
+    return BACKEND_TPL % locals()
 
 
 def pool_to_str(pool, nodes):
