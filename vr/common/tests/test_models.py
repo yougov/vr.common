@@ -1,12 +1,13 @@
 import datetime
 import unittest
 import json
+import subprocess
 
 import redis
 import pytest
 
 from vr.common.models import Host, ProcError, Build
-from vr.common.utils import parse_redis_url, utc
+from vr.common.utils import utc
 from vr.common.tests import FakeRPC
 
 
@@ -142,21 +143,38 @@ def test_datetime_none():
     assert proc.now is None
 
 
-class RedisCacheTests(unittest.TestCase):
-    def setUp(self):
-        self.server = FakeRPC()
-        self.supervisor = self.server.supervisor
-        params = parse_redis_url('redis://localhost:6379/15')
-        self.redis = redis.StrictRedis(**params)
-        try:
-            self.redis.ping()
-        except:
-            pytest.skip("Need redis bound on 6379")
-        self.host = Host('somewhere', self.server, redis_or_url=self.redis)
+@pytest.fixture(scope='session')
+def skip_if_redis_missing(request):
+    """
+    As of 1.2.0, the pytest-redis fixture will choke if
+    it can't find redis. Check in advance and skip
+    if redis can't be found.
+    """
+    executable = (
+        request.config.getoption('redis_exec') or
+        request.config.getini('redis_exec')
+    )
+    try:
+        res = subprocess.Popen([executable, '--version']).wait()
+    except Exception:
+        res = True
+    if res:
+        raise pytest.skip("Unable to execute " + executable)
 
-    def tearDown(self):
-        # self.redis.delete(self.host.cache_key)
-        pass
+
+@pytest.fixture
+def redis_bundle(skip_if_redis_missing, redisdb, request):
+    server = FakeRPC()
+    vars(request.instance).update(
+        redis=redisdb,
+        server=server,
+        supervisor=server.supervisor,
+        host=Host('somewhere', server, redis_or_url=redisdb),
+    )
+
+
+@pytest.mark.usefixtures('redis_bundle')
+class TestRedisCache:
 
     def test_proc_get_cache_set(self):
         # Ensure that single-proc data fetched from host is saved to cache
