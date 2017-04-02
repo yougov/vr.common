@@ -4,6 +4,7 @@ import random
 import string
 import warnings
 import abc
+import contextlib
 
 import six
 
@@ -49,19 +50,16 @@ class SshBasedBalancer(Balancer):
         con = paramiko.SSHClient()
         con.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         con.connect(host, username=self.user, password=self.password)
-        return con
+        return contextlib.closing(con)
 
     def _read_file(self, host, path):
         # create connection
-        con = self._get_connection(host)
-        # read file with SFTP
-        sftp = con.open_sftp()
-        f = sftp.open(path, 'rb')
-        contents = f.read()
-        # close connection
-        f.close()
-        con.close()
-        # return file contents
+        with self._get_connection(host) as con:
+            # read file with SFTP
+            sftp = con.open_sftp()
+            with contextlib.closing(sftp.open(path, 'rb')) as f:
+                contents = f.read()
+
         return contents
 
     def _sudo(self, con, cmd):
@@ -71,29 +69,25 @@ class SshBasedBalancer(Balancer):
         logging.info(stdout.read())
 
     def _write_file(self, host, path, contents):
-        con = self._get_connection(host)
-        # read file with SFTP
-        sftp = con.open_sftp()
-        # write file to temporary location
-        name = ''.join(random.choice(string.lowercase) for x in range(10))
-        tmppath = posixpath.join(self.tmpdir, name)
-        f = sftp.open(tmppath, 'wb')
-        f.write(contents)
-        f.close()
-        sftp.chmod(tmppath, 0o644)
-        # run sudo cmd to copy file to production location, and set owner/perms
-        self._sudo(con, 'mv %s %s' % (tmppath, path))
-        self._sudo(con, 'chown root %s' % path)
-        # close SSH connection
-        con.close()
+        with self._get_connection(host) as con:
+            # read file with SFTP
+            sftp = con.open_sftp()
+            # write file to temporary location
+            name = ''.join(random.choice(string.lowercase) for x in range(10))
+            tmppath = posixpath.join(self.tmpdir, name)
+            with contextlib.closing(sftp.open(tmppath, 'wb')) as f:
+                f.write(contents)
+            # set perms
+            sftp.chmod(tmppath, 0o644)
+            # run sudo cmd to copy file to production location
+            self._sudo(con, 'mv %s %s' % (tmppath, path))
+            # set owner
+            self._sudo(con, 'chown root %s' % path)
 
     def _reload_config(self, host):
-        # connect
-        con = self._get_connection(host)
-        # run sudo cmd to reload config
-        self._sudo(con, self.reload_cmd)
-        # disconnect
-        con.close()
+        with self._get_connection(host) as con:
+            # run sudo cmd to reload config
+            self._sudo(con, self.reload_cmd)
 
     def _delete_host_nodes(self, host, pool, nodes):
         current = self._get_host_nodes(host, pool)
