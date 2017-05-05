@@ -20,6 +20,10 @@ def get_container_path(settings):
     return os.path.join(get_proc_path(settings), 'rootfs')
 
 
+def get_lxc_work_path(settings):
+    return os.path.join(get_proc_path(settings), 'work')
+
+
 def get_container_name(settings):
     return '-'.join([
         settings.app_name,

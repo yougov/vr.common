@@ -12,6 +12,7 @@ from datetime import datetime
 import textwrap
 import contextlib
 import functools
+from pkg_resources import parse_version, SetuptoolsVersion
 
 try:
     import pwd
@@ -257,19 +258,38 @@ def get_lxc_version():
     # "lxc version: "
     try:
         result = runner(['lxc-version']).rstrip()
-        return result.replace("lxc version: ", "")
+        return parse_version(result.replace("lxc version: ", ""))
     except (OSError, subprocess.CalledProcessError):
         pass
 
     # New LXC instead has a --version option on most installed executables.
-    return runner(['lxc-start', '--version']).rstrip()
+    return parse_version(runner(['lxc-start', '--version']).rstrip())
 
 
 def get_lxc_network_config(version):
-    if version.split('.') < ['1', '0', '0']:
+    assert isinstance(version, SetuptoolsVersion), \
+        'Wrong version type: {!r}'.format(version)
+    if version < parse_version('1.0.0'):
         return ''
     return textwrap.dedent(
         """
         # Share the host's networking interface. This is unsafe!
         # TODO: make separate virtual interfaces per container.
         lxc.network.type = none""")
+
+
+def get_lxc_overlayfs_config_fmt(version):
+    if version < parse_version('2.0.0'):
+        # Old LXC
+        return (
+            "lxc.mount.entry = overlayfs %(proc_path)s overlayfs "
+            "lowerdir=%(image_path)s,upperdir=%(proc_path)s "
+            "0 0"
+        )
+
+    # On newer LXC, fstype is called 'overlay' and we need a 'workdir'
+    return (
+        "lxc.mount.entry = overlay %(proc_path)s overlay "
+        "lowerdir=%(image_path)s,upperdir=%(proc_path)s,workdir=%(work_path)s "
+        "0 0"
+    )
