@@ -1,3 +1,8 @@
+4.9.1
+=====
+
+Remove dependency to SetuptoolsVersion
+
 4.9
 ===
 
