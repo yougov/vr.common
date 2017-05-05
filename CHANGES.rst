@@ -1,3 +1,8 @@
+4.9
+===
+
+Make overlayfs configuration dependent on LXC
+
 4.8.2
 =====
 
