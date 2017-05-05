@@ -12,7 +12,7 @@ from datetime import datetime
 import textwrap
 import contextlib
 import functools
-from pkg_resources import parse_version, SetuptoolsVersion
+from pkg_resources import parse_version
 
 try:
     import pwd
@@ -267,8 +267,6 @@ def get_lxc_version():
 
 
 def get_lxc_network_config(version):
-    assert isinstance(version, SetuptoolsVersion), \
-        'Wrong version type: {!r}'.format(version)
     if version < parse_version('1.0.0'):
         return ''
     return textwrap.dedent(
