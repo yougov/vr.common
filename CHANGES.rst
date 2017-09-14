@@ -1,3 +1,8 @@
+4.9.2
+=====
+
+Clean empty pools in StingRay balancer
+
 4.9.1
 =====
 
