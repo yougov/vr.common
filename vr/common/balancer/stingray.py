@@ -1,6 +1,7 @@
+import collections
+import logging
 import os
 import time
-import collections
 
 import suds.xsd.doctor
 import suds.client
@@ -8,6 +9,8 @@ from suds.plugin import MessagePlugin
 from suds import WebFault
 
 from . import base
+
+logger = logging.getLogger(__name__)
 
 
 # Suds has broken array marshaling.  See these links:
@@ -76,16 +79,18 @@ class StingrayBalancer(base.Balancer):
     def add_nodes(self, pool, nodes):
         # Stingray will kindly avoid creating duplicates if you submit a node
         # that is already in the pool.
+        logger.info('Adding nodes %s to pool %s', nodes, pool)
         try:
             self._call_node_func(self.client.service.addNodes, pool, nodes)
         except WebFault as wf:
             if 'Unknown pool' in wf.message:
                 # If pool doesn't exist, create it.
-                self._call_node_func(self.client.service.addPool, pool, nodes)
+                self.add_pool(pool, nodes)
             else:
                 raise
 
     def delete_nodes(self, pool, nodes):
+        logger.info('Deleting nodes %s from pool %s', nodes, pool)
         try:
             self._call_node_func(self.client.service.disableNodes, pool, nodes)
             # wait <grace_period> seconds for connections to finish before
@@ -100,7 +105,31 @@ class StingrayBalancer(base.Balancer):
             else:
                 raise
 
+        # Clean up pool in StingRay
+        self.delete_pool_if_empty(pool)
+
+    def add_pool(self, pool, nodes):
+        logger.info('Adding new pool %s', pool)
+        self._call_node_func(self.client.service.addPool, pool, nodes)
+
+    def delete_pool(self, pool):
+        logger.info('Deleting pool %s', pool)
+        try:
+            self.client.service.deletePool([self.pool_prefix + pool])
+        except WebFault as wf:
+            if 'Unknown pool' in str(wf):
+                pass
+            else:
+                raise
+
+    def delete_pool_if_empty(self, pool):
+        nodes = self.get_nodes(pool)
+        if not nodes:
+            logger.info('Pool %s is empty', pool)
+            self.delete_pool(pool)
+
     def get_nodes(self, pool):
+        logger.info('Getting nodes for pool %s', pool)
         try:
             # get just the first item from the arrayarray
             nodes = self.client.service.getNodes([self.pool_prefix + pool])[0]
