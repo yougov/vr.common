@@ -11,6 +11,8 @@ import six
 import paramiko
 from django.conf import settings
 
+logger = logging.getLogger(__name__)
+
 
 @six.add_metaclass(abc.ABCMeta)
 class Balancer(object):
@@ -30,6 +32,15 @@ class Balancer(object):
     @abc.abstractmethod
     def get_nodes(self, pool_name):
         pass
+
+    def delete_pool(self, pool_name):
+        pass
+
+    def delete_pool_if_empty(self, pool):
+        nodes = self.get_nodes(pool)
+        if not nodes:
+            logger.info('Deleting empty pool %s', pool)
+            self.delete_pool(pool)
 
 
 class SshBasedBalancer(Balancer):
@@ -66,7 +77,7 @@ class SshBasedBalancer(Balancer):
         stdin, stdout, stderr = con.exec_command('sudo ' + cmd)
         stdin.write(self.password + '\n')
         stdin.flush()
-        logging.info(stdout.read())
+        logger.info(stdout.read())
 
     def _write_file(self, host, path, contents):
         with self._get_connection(host) as con:
