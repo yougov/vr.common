@@ -11,6 +11,11 @@ with io.open('README.rst', encoding='utf-8') as readme:
 
 name = 'vr.common'
 description = 'Libraries and for deploying with Velociraptor'
+nspkg_technique = 'managed'
+"""
+Does this package use "native" namespace packages or
+pkg_resources "managed" namespace packages?
+"""
 
 params = dict(
     name=name,
@@ -22,7 +27,10 @@ params = dict(
     url="https://github.com/yougov/" + name,
     packages=setuptools.find_packages(),
     include_package_data=True,
-    namespace_packages=name.split('.')[:-1],
+    namespace_packages=(
+        name.split('.')[:-1] if nspkg_technique == 'managed'
+        else []
+    ),
     python_requires='>=2.7',
     install_requires=[
         'isodate>=0.4.4',
@@ -33,6 +41,18 @@ params = dict(
         'sseclient==0.0.11',
     ],
     extras_require={
+        'testing': [
+            'pytest>=2.8',
+            'pytest-sugar',
+            'collective.checkdocs',
+            'redis',
+            'pytest-redis',
+        ],
+        'docs': [
+            'sphinx',
+            'jaraco.packaging>=3.2',
+            'rst.linker>=1.9',
+        ],
         ':python_version=="2.7"': [
             'suds==0.4',
         ],
@@ -54,4 +74,4 @@ params = dict(
     },
 )
 if __name__ == '__main__':
-	setuptools.setup(**params)
+    setuptools.setup(**params)

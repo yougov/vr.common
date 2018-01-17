@@ -3,15 +3,8 @@
 
 .. image:: https://img.shields.io/pypi/pyversions/vr.common.svg
 
-.. image:: https://img.shields.io/pypi/dm/vr.common.svg
-
 .. image:: https://img.shields.io/travis/yougov/vr.common/master.svg
    :target: http://travis-ci.org/yougov/vr.common
 
-
-License
-=======
-
-License is indicated in the project metadata (typically one or more
-of the Trove classifiers). For more details, see `this explanation
-<https://github.com/jaraco/skeleton/issues/1>`_.
+.. image:: https://readthedocs.org/projects/vr_common/badge/?version=latest
+   :target: https://vr_common.readthedocs.io/en/latest/?badge=latest

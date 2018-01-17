@@ -1,5 +1,0 @@
-pytest >= 2.8
-pytest-sugar
-
-redis
-pytest-redis
