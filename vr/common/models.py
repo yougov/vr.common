@@ -650,7 +650,7 @@ class BaseResource(object):
                     print(doc['traceback'])
                 else:
                     print(doc)
-            except:
+            except Exception:
                 print(resp.content)
             resp.raise_for_status()
         self.load(resp.headers['location'])
