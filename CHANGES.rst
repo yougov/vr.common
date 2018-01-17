@@ -3,6 +3,9 @@
 
 Add suds-py3 as a dependency when on Python 3.
 
+Added new 'balancers' extra, which installs the dependencies for
+the balancers.
+
 4.9.2
 =====
 

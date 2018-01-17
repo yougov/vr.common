@@ -47,10 +47,6 @@ params = dict(
             'collective.checkdocs',
             'redis',
             'pytest-redis',
-
-            # to allow balancers to be imported
-            'paramiko',
-            'django',
         ],
         'docs': [
             'sphinx',
@@ -62,6 +58,16 @@ params = dict(
         ],
         ':python_version!="2.7"': [
             'suds-py3',
+        ],
+
+        'balancers': [
+            'paramiko',
+        ],
+        'balancers:python_version=="2.7"': [
+            'django<2',
+        ],
+        'balancers:python_version!="2.7"': [
+            'django',
         ],
     },
     setup_requires=[
