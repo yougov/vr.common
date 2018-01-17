@@ -1,3 +1,8 @@
+4.10
+====
+
+Add suds-py3 as a dependency when on Python 3.
+
 4.9.2
 =====
 

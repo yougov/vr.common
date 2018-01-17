@@ -36,6 +36,9 @@ params = dict(
         ':python_version=="2.7"': [
             'suds==0.4',
         ],
+        ':python_version!="2.7"': [
+            'suds-py3',
+        ],
     },
     setup_requires=[
         'setuptools_scm>=1.15.0',
