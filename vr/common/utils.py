@@ -8,7 +8,6 @@ import random
 import string
 import hashlib
 import errno
-from datetime import datetime
 import textwrap
 import contextlib
 import functools
@@ -24,7 +23,6 @@ except ImportError:
 
 from six.moves import urllib
 
-import isodate
 import six
 
 
@@ -147,18 +145,6 @@ def parse_redis_url(url):
         'port': parsed.port,
         'db': int(parsed.path.replace('/', '')),
     }
-
-
-utc = isodate.FixedOffset(0, 0, 'UTC')
-
-def utcfromtimestamp(ts):
-    """
-    Given a UNIX timestamp, return a Python datetime with the tzinfo explicitly
-    set to UTC (as opposed to datetime.utcfromtimestamp, which returns a naive
-    datetime with UTC values).
-    """
-    dt = datetime.utcfromtimestamp(ts)
-    return dt.replace(tzinfo=utc)
 
 
 def randchars(num=8):

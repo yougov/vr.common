@@ -18,6 +18,7 @@ import six
 import yaml
 import requests
 import sseclient
+import utc
 
 try:
     import redis
@@ -34,7 +35,7 @@ except ImportError:
         def get_password(*args, **kwargs):
             return None
 
-from vr.common.utils import utcfromtimestamp, parse_redis_url
+from vr.common.utils import parse_redis_url
 
 log = logging.getLogger(__name__)
 
@@ -243,16 +244,16 @@ class Proc(object):
         self.name = data['name']
         # When a timestamp field is inapplicable, Supevisor will put a 0 there
         # instead of a real unix timestamp.
-        self.now = utcfromtimestamp(data['now']) if data['now'] else None
+        self.now = utc.fromtimestamp(data['now']) if data['now'] else None
         self.pid = data['pid']
         self.spawnerr = data['spawnerr']
-        self.start_time = utcfromtimestamp(data['start']) \
+        self.start_time = utc.fromtimestamp(data['start']) \
             if data['start'] else None
         self.state = data['state']
         self.statename = data['statename']
         self.stderr_logfile = data['stderr_logfile']
         self.stdout_logfile = data['stdout_logfile']
-        self.stop_time = utcfromtimestamp(data['stop']) \
+        self.stop_time = utc.fromtimestamp(data['stop']) \
             if data['stop'] else None
 
         # The names returned from Supervisor have a bunch of metadata encoded

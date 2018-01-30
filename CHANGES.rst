@@ -1,3 +1,10 @@
+5.0
+===
+
+Removed ``utc`` and ``utcfromtimestamp`` from ``common.utils``.
+Use ``utc.UTC`` and ``utc.fromtimestamp`` from the `utc
+<https://pypi.org/project/utc>`_ instead.
+
 4.10
 ====
 

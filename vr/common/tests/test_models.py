@@ -5,9 +5,9 @@ import subprocess
 
 import redis
 import pytest
+import utc
 
 from vr.common.models import Host, ProcError, Build
-from vr.common.utils import utc
 from vr.common.tests import FakeRPC
 
 
@@ -48,15 +48,15 @@ class FakeProcCase(unittest.TestCase):
         assert self.dummyproc.name == 'dummyproc'
 
     def test_start(self):
-        ts = datetime.datetime(2012, 12, 19, 6, 19, 46, tzinfo=utc)
+        ts = utc.datetime(2012, 12, 19, 6, 19, 46)
         assert self.dummyproc.start_time == ts
 
     def test_stop(self):
-        ts = datetime.datetime(2012, 12, 19, 6, 19, 46, tzinfo=utc)
+        ts = utc.datetime(2012, 12, 19, 6, 19, 46)
         assert self.dummyproc.stop_time == ts
 
     def test_now(self):
-        ts = datetime.datetime(2012, 12, 19, 6, 19, 46, tzinfo=utc)
+        ts = utc.datetime(2012, 12, 19, 6, 19, 46)
         assert self.dummyproc.now == ts
 
     def test_description(self):
