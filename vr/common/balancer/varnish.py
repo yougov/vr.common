@@ -100,6 +100,6 @@ class VarnishBalancer(SshBasedBalancer):
             else:
                 raise
         include_line = self._get_include_line(pool)
-        if not include_line in main_contents:
+        if include_line not in main_contents:
             self._write_file(host, main_file, main_contents + '\n' +
                              include_line)

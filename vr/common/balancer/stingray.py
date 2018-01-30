@@ -30,8 +30,11 @@ class FixArrayPlugin(MessagePlugin):
                     'addPool',
                     )
         if command.name in affected:
-            context.envelope.addPrefix('xsd', 'http://www.w3.org/1999/XMLSchema')
-            child_spec = collections.defaultdict(lambda: 'values',
+            context.envelope.addPrefix(
+                'xsd', 'http://www.w3.org/1999/XMLSchema',
+            )
+            child_spec = collections.defaultdict(
+                lambda: 'values',
                 addPool='nodes', disableNodes='nodes')
             values = command.getChild(child_spec[command.name])
             values.set('SOAP-ENC:arrayType', 'xsd:list[1]')
@@ -44,7 +47,8 @@ class FixArrayPlugin(MessagePlugin):
 class StingrayBalancer(base.Balancer):
     def __init__(self, config):
         self.url = config['URL']
-        imp = suds.xsd.doctor.Import('http://schemas.xmlsoap.org/soap/encoding/')
+        imp = suds.xsd.doctor.Import(
+            'http://schemas.xmlsoap.org/soap/encoding/')
         imp.filter.add('http://soap.zeus.com/zxtm/1.0/')
         doctor = suds.xsd.doctor.ImportDoctor(imp)
 

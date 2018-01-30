@@ -459,6 +459,7 @@ class ProcData(ConfigData):
         if self.proc_name is None and self.cmd is None:
             raise ValueError('Must provide either proc_name or cmd')
 
+
 Credential = collections.namedtuple('Credential', 'username password')
 
 
@@ -475,7 +476,8 @@ class Filter(six.text_type):
     exclusions = []
     "additional patterns to exclude"
 
-    getter = lambda item: item
+    def getter(item):
+        return item
 
     def matches(self, items):
         return filter(self.match, items)

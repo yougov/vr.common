@@ -1,4 +1,3 @@
-import datetime
 import unittest
 import json
 import subprocess
@@ -34,12 +33,14 @@ def test_get_procs_len():
     procs = host.get_procs()
     assert len(procs) == 2
 
+
 class FakeProcCase(unittest.TestCase):
     def setUp(self):
         self.server = FakeRPC()
         self.host = Host('somewhere', self.server)
         self.dummyproc = self.host.get_proc('dummyproc')
-        self.nodeproc = self.host.get_proc('node_example-v2-local-f96054b7-web-5003')
+        self.nodeproc = self.host.get_proc(
+            'node_example-v2-local-f96054b7-web-5003')
 
     def test_hostname(self):
         assert self.dummyproc.host.name == 'somewhere'
@@ -66,7 +67,9 @@ class FakeProcCase(unittest.TestCase):
         assert self.dummyproc.group == 'dummyproc'
 
     def test_logfile(self):
-        assert self.dummyproc.logfile == '/var/log/supervisor/dummyproc-stdout---supervisor-cYv5Q2.log'
+        assert self.dummyproc.logfile == (
+            '/var/log/supervisor/dummyproc-stdout---supervisor-cYv5Q2.log'
+        )
 
     def test_pid(self):
         assert self.dummyproc.pid == 5556
@@ -81,7 +84,9 @@ class FakeProcCase(unittest.TestCase):
         assert self.dummyproc.stderr_logfile == '/tmp/pub.log'
 
     def test_stdout_logfile(self):
-        assert self.dummyproc.stdout_logfile == '/var/log/supervisor/dummyproc-stdout---supervisor-cYv5Q2.log'
+        assert self.dummyproc.stdout_logfile == (
+            '/var/log/supervisor/dummyproc-stdout---supervisor-cYv5Q2.log'
+        )
 
     def test_as_dict(self):
         assert self.dummyproc.as_dict() == {
@@ -93,7 +98,9 @@ class FakeProcCase(unittest.TestCase):
             'host': 'somewhere',
             'id': 'somewhere-dummyproc',
             'jsname': 'dummyproc',
-            'logfile': '/var/log/supervisor/dummyproc-stdout---supervisor-cYv5Q2.log',
+            'logfile': (
+                '/var/log/supervisor/dummyproc-stdout---supervisor-cYv5Q2.log'
+            ),
             'name': 'dummyproc',
             'now': '2012-12-19T06:19:46+00:00',
             'pid': 5556,
@@ -105,7 +112,9 @@ class FakeProcCase(unittest.TestCase):
             'state': 20,
             'statename': 'RUNNING',
             'stderr_logfile': '/tmp/pub.log',
-            'stdout_logfile': '/var/log/supervisor/dummyproc-stdout---supervisor-cYv5Q2.log',
+            'stdout_logfile': (
+                '/var/log/supervisor/dummyproc-stdout---supervisor-cYv5Q2.log'
+            ),
             'stop_time': '2012-12-19T06:19:46+00:00',
             'version': 'UNKNOWN',
         }
@@ -217,7 +226,8 @@ class TestRedisCache:
         self.redis.hset(self.host.cache_key, 'deadproc', json.dumps(data))
 
         # Requesting just this proc should return data
-        assert self.host.get_proc('deadproc', check_cache=True).name == 'deadproc'
+        proc = self.host.get_proc('deadproc', check_cache=True)
+        assert proc.name == 'deadproc'
 
         # But requesting all procs, with deadproc absent from the Supervisor
         # data, should clear him from cache
@@ -227,6 +237,7 @@ class TestRedisCache:
     def test_nonexistent_proc_raises_proc_error(self):
         with pytest.raises(ProcError):
             self.host.get_proc('nonexistent')
+
 
 def test_build_sets():
     """

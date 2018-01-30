@@ -3,6 +3,7 @@ import logging
 
 from . import base
 
+
 class DummyBalancer(base.Balancer):
     """
     Fake balancer class for local development.

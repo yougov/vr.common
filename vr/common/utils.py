@@ -106,7 +106,9 @@ def run(command, verbose=False):
     comes in.
 
     """
-    do_nothing = lambda *args, **kwargs: None
+    def do_nothing(*args, **kwargs):
+        return None
+
     v_print = print if verbose else do_nothing
 
     p = subprocess.Popen(
@@ -176,8 +178,8 @@ def file_md5(filename):
     an MD5 file hash.  Avoids having to hold the whole file in memory.
     """
     md5 = hashlib.md5()
-    with open(filename,'rb') as f:
-        for chunk in iter(lambda: f.read(128*md5.block_size), b''):
+    with open(filename, 'rb') as f:
+        for chunk in iter(lambda: f.read(128 * md5.block_size), b''):
             md5.update(chunk)
     return md5.hexdigest()
 

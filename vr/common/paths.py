@@ -4,10 +4,10 @@ deploy time.  All of the get_* functions accept a ProcData object, which is is
 built from a dict parsed out of a proc.yaml file.
 """
 import os
+import importlib
 
-# Imported here just to satisfy legacy versions of vr.runners that used to grab
-# it here.
-from vr.common.models import ProcData
+# Satisfy legacy versions of vr.runners that used ProcData from here
+ProcData = importlib.import_module('vr.common.models').ProcData
 
 VR_ROOT = '/apps'
 BUILDS_ROOT = VR_ROOT + '/builds'
