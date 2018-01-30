@@ -5,6 +5,9 @@ Removed ``utc`` and ``utcfromtimestamp`` from ``common.utils``.
 Use ``utc.UTC`` and ``utc.fromtimestamp`` from the `utc
 <https://pypi.org/project/utc>`_ instead.
 
+``vr.common.paths`` no longer exposes ``ProcData``, which should
+be imported from ``vr.common.models``.
+
 4.10
 ====
 
