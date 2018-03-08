@@ -123,10 +123,9 @@ def run(command, verbose=False):
 
     def log_and_yield(line):
         if six.PY2:
-            # p.stdout is a PIPE, i.e. a file, opened in 'rb'. Reading
-            # from it returns a bytestring in Py2, that has to be
-            # decoded
-            line = line.decode('utf8', 'replace')
+            # If not unicode, try to decode it first
+            if isinstance(line, str):
+                line = line.decode('utf8', 'replace')
         v_print(line)
         return line
 
