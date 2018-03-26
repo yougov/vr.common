@@ -38,6 +38,7 @@ params = dict(
         'requests',
         'PyYAML>=3.10',
         'sseclient==0.0.11',
+        'contextlib2',
     ],
     extras_require={
         'testing': [

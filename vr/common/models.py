@@ -19,6 +19,7 @@ import yaml
 import requests
 import sseclient
 import utc
+import contextlib2
 
 try:
     import redis
@@ -591,6 +592,9 @@ class Velociraptor(object):
     }
 
     def get_credentials(self):
+        return self._get_credentials_env() or self._get_credentials_local()
+
+    def _get_credentials_local(self):
         username = self.username or getpass.getuser()
         hostname = self.hostname()
 
@@ -605,6 +609,13 @@ class Velociraptor(object):
             prompt = prompt_tmpl.format(**vars())
             password = getpass.getpass(prompt)
         return Credential(username, password)
+
+    def _get_credentials_env(self):
+        with contextlib2.suppress(KeyError):
+            return Credential(
+                os.environ['VELOCIRAPTOR_USERNAME'],
+                os.environ['VELOCIRAPTOR_PASSWORD'],
+            )
 
     def load(self, path):
         url = self._build_url(path)

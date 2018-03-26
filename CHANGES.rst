@@ -1,3 +1,9 @@
+5.1
+===
+
+In Velociraptor.get_credentials, allow username and password
+to be resolved by environment variables.
+
 5.0
 ===
 
