@@ -94,6 +94,8 @@ class StingrayBalancer(base.Balancer):
                 raise
 
     def delete_nodes(self, pool, nodes):
+        existing_nodes = set(self.get_nodes(pool))
+        nodes = list(existing_nodes.intersection(nodes))
         logger.info('Deleting nodes %s from pool %s', nodes, pool)
         try:
             self._call_node_func(self.client.service.disableNodes, pool, nodes)
