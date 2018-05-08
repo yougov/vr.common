@@ -817,3 +817,27 @@ class Release(BaseResource):
 
 class Ingredient(BaseResource):
     base = '/api/v1/ingredients/'
+
+    @property
+    def friendly_name(self):
+        return '{} ({})'.format(self.name, self.id)
+
+    def __repr__(self):
+        return self.friendly_name
+
+    @classmethod
+    def by_name(cls, vr, ingredient_name):
+        docs = list(vr.query(cls.base, {
+            'name': ingredient_name,
+        }))
+        assert len(docs) == 1, 'Found wrong number of ingredients: {}'.format(
+            len(docs))
+
+        return cls(vr, docs[0])
+
+    @classmethod
+    def by_id(cls, vr, ingredient_id):
+        resp = vr.session.get(vr._build_url(cls.base,
+                                            '{}/'.format(ingredient_id)))
+        resp.raise_for_status()
+        return cls(vr, resp.json())
