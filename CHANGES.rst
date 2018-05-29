@@ -1,6 +1,12 @@
 5.3
 ===
 
+Swarm model can be used in sets and comparable.
+BaseResource has by_id classmethod.
+
+5.3
+===
+
 #3: Add functionality to Ingredient model.
 
 5.1
