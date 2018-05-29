@@ -1,3 +1,8 @@
+5.3
+===
+
+#3: Add functionality to Ingredient model.
+
 5.1
 ===
 
