@@ -692,6 +692,13 @@ class BaseResource(object):
         ob_docs = vr.query(cls.base, params)
         return [cls(vr, ob) for ob in ob_docs]
 
+    @classmethod
+    def by_id(cls, vr, id):
+        resp = vr.session.get(vr._build_url(cls.base,
+                                            '{}/'.format(id)))
+        resp.raise_for_status()
+        return cls(vr, resp.json())
+
 
 class Swarm(BaseResource):
     """
@@ -701,6 +708,12 @@ class Swarm(BaseResource):
 
     def __lt__(self, other):
         return self.name < other.name
+
+    def __eq__(self, other):
+        return self.name == other.name
+
+    def __hash__(self):
+        return hash(self.name)
 
     @property
     def name(self):
@@ -834,10 +847,3 @@ class Ingredient(BaseResource):
             len(docs))
 
         return cls(vr, docs[0])
-
-    @classmethod
-    def by_id(cls, vr, ingredient_id):
-        resp = vr.session.get(vr._build_url(cls.base,
-                                            '{}/'.format(ingredient_id)))
-        resp.raise_for_status()
-        return cls(vr, resp.json())

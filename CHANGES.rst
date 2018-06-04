@@ -1,3 +1,9 @@
+5.4
+===
+
+Swarm model can be used in sets and comparable.
+BaseResource has by_id classmethod.
+
 5.3
 ===
 
