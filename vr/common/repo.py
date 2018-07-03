@@ -98,33 +98,35 @@ class Repo(object):
         return r.output.replace('\n', '')
 
     def clone(self):
-        log.info('Cloning %s to %s' % (self.url, self.folder))
+        log.info('Cloning %s to %s', self.url, self.folder)
         cmd = {
             'hg': 'hg clone %s %s' % (self.url, self.folder),
             'git': 'git clone %s %s' % (self.url, self.folder),
         }[self.vcs_type]
         self.run(cmd)
 
-    def update(self, rev):
+    def update(self, rev=None):
         # If folder doesn't exist, do a clone.  Else pull and update.
         if not os.path.exists(self.folder):
             self.clone()
 
-        log.info('Updating %s from %s' % (self.folder, self.url))
+        log.info('Updating %s from %s', self.folder, self.url)
+
+        # account for self.fragment=='' case
+        rev = rev or self.fragment or None
 
         with chdir(self.folder):
             if self.vcs_type == 'hg':
                 self.run('hg pull %s' % self.url)
-                self.run('hg up --clean %s' % rev)
+                self.run('hg up --clean %s' % (rev or 'tip'))
             elif self.vcs_type == 'git':
-                # NOTE: We don't need the url for git b/c the pull
-                #       didn't prompt for a password.
-                # NOTE: Use `git fetch` instead `git pull` to avoid a
-                #       merge. Use `--tags` to fetch all available
-                #       tags.
-                self.run('git fetch --tags')
+                # Get all refs first
                 self.run('git fetch')
-                self.run('git checkout %s' % rev)
+                # Checkout the rev we want
+                self.run('git checkout %s' % (rev or 'master'))
+                # Pull latest changes, failing if it can't avoid merge
+                # commits (git pull also pulls relevant tags)
+                self.run('git pull --ff-only')
 
     @property
     def basename(self):
