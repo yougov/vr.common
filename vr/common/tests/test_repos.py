@@ -7,6 +7,11 @@ from vr.common.utils import tmpdir, run
 from vr.common.tests import tmprepo
 
 
+def _git_config():
+    run('git config user.email "you@example.com"')
+    run('git config --global user.name "Your Name"')
+
+
 def test_hg_folder_detection():
     with tmpdir():
         folder = os.path.abspath('.hg')
@@ -85,6 +90,8 @@ def test_git_update():
     newrev = '6c79fb7d071a9054542114eea70f69d5361a61ff'
     oldrev = '16c1dba07ee78d5dbee1f965d91d3d61942ccb67'
     with tmprepo('git_python_app.tar.gz', 'git') as r:
+        _git_config()
+
         r.update(newrev)
         f = 'newfile'
         assert os.path.isfile(f)
@@ -93,11 +100,11 @@ def test_git_update():
         assert not os.path.isfile(f)
 
 
-def test_update_norev():
+def test_hg_update_norev():
     with tmprepo('hg_python_app.tar.gz', 'hg') as r:
-        # repo.update requires passing a revision
-        with pytest.raises(TypeError):
-            r.update()
+        # rev defaults to tip
+        r.update()
+        assert r.version == '802efadda217'
 
 
 def test_hg_get_version():
@@ -110,6 +117,7 @@ def test_hg_get_version():
 def test_git_get_version():
     rev = '16c1dba07ee78d5dbee1f965d91d3d61942ccb67'
     with tmprepo('git_python_app.tar.gz', 'git') as r:
+        _git_config()
         r.update(rev)
         assert r.version == rev
 

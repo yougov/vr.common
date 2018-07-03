@@ -125,8 +125,9 @@ class Repo(object):
                 # Checkout the rev we want
                 self.run('git checkout %s' % (rev or 'master'))
                 # Pull latest changes, failing if it can't avoid merge
-                # commits (git pull also pulls relevant tags)
-                self.run('git pull --ff-only')
+                # commits (git pull also pulls relevant tags).
+                # Assume origin is called 'origin'.
+                self.run('git pull --ff-only origin {}'.format(rev))
 
     @property
     def basename(self):
