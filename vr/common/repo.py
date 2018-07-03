@@ -117,17 +117,21 @@ class Repo(object):
 
         with chdir(self.folder):
             if self.vcs_type == 'hg':
-                self.run('hg pull %s' % self.url)
-                self.run('hg up --clean %s' % (rev or 'tip'))
+                rev = rev or 'tip'
+                self.run('hg pull {}'.format(self.url))
+                self.run('hg up --clean {}'.format(rev))
             elif self.vcs_type == 'git':
+                # Default to master
+                rev = rev or 'master'
+                # Assume origin is called 'origin'.
+                remote = 'origin'
                 # Get all refs first
                 self.run('git fetch')
                 # Checkout the rev we want
-                self.run('git checkout %s' % (rev or 'master'))
+                self.run('git checkout {}'.format(rev))
                 # Pull latest changes, failing if it can't avoid merge
                 # commits (git pull also pulls relevant tags).
-                # Assume origin is called 'origin'.
-                self.run('git pull --ff-only origin {}'.format(rev))
+                self.run('git pull --ff-only {} {}'.format(remote, rev))
 
     @property
     def basename(self):
