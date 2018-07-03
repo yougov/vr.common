@@ -78,7 +78,7 @@ class Repo(object):
             url = url[:-1]
         self.url = url
 
-    def run(self, command):
+    def run(self, command):  # pylint: disable=no-self-use
 
         r = run(command, verbose=True)
         r.raise_for_status()
@@ -161,9 +161,9 @@ def basename(url):
     # url.
     url = url.strip()
 
-    url, sep, fragment = url.partition('#')
+    url, _sep, _fragment = url.partition('#')
     # Remove trailing slash from url if present
     if url.endswith('/'):
         url = url[:-1]
     # Also strip .git from url if it ends in that.
-    return re.sub('\.git$', '', url.split('/')[-1])
+    return re.sub(r'\.git$', '', url.split('/')[-1])
