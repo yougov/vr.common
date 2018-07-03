@@ -1,3 +1,8 @@
+5.4.1
+=====
+
+Fix issue with git-pulling revisions.
+
 5.4
 ===
 
