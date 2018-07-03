@@ -78,8 +78,8 @@ class Repo(object):
             url = url[:-1]
         self.url = url
 
-    def run(self, command):  # pylint: disable=no-self-use
-
+    @staticmethod
+    def run(command):
         r = run(command, verbose=True)
         r.raise_for_status()
         return r
