@@ -115,23 +115,28 @@ class Repo(object):
         # account for self.fragment=='' case
         rev = rev or self.fragment or None
 
+        update = getattr(self, '_update_{self.vcs_type}'.format(**locals()))
+
         with chdir(self.folder):
-            if self.vcs_type == 'hg':
-                rev = rev or 'tip'
-                self.run('hg pull {}'.format(self.url))
-                self.run('hg up --clean {}'.format(rev))
-            elif self.vcs_type == 'git':
-                # Default to master
-                rev = rev or 'master'
-                # Assume origin is called 'origin'.
-                remote = 'origin'
-                # Get all refs first
-                self.run('git fetch')
-                # Checkout the rev we want
-                self.run('git checkout {}'.format(rev))
-                # Pull latest changes, failing if it can't avoid merge
-                # commits (git pull also pulls relevant tags).
-                self.run('git pull --ff-only {} {}'.format(remote, rev))
+            update(rev)
+
+    def _update_hg(self, rev):
+        rev = rev or 'tip'
+        self.run('hg pull {}'.format(self.url))
+        self.run('hg up --clean {}'.format(rev))
+
+    def _update_git(self, rev):
+        # Default to master
+        rev = rev or 'master'
+        # Assume origin is called 'origin'.
+        remote = 'origin'
+        # Get all refs first
+        self.run('git fetch')
+        # Checkout the rev we want
+        self.run('git checkout {}'.format(rev))
+        # Pull latest changes, failing if it can't avoid merge
+        # commits (git pull also pulls relevant tags).
+        self.run('git pull --ff-only {} {}'.format(remote, rev))
 
     @property
     def basename(self):
