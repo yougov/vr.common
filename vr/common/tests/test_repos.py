@@ -128,6 +128,13 @@ def test_git_get_short_version():
         assert r.version.startswith(rev)
 
 
+def test_git_detached_tag():
+    with tmprepo('git_python_app.tar.gz', 'git') as r:
+        _git_config()
+        r.update('detached-tag')
+        assert r.version.startswith('1418411')
+
+
 def test_basename_trailing_space():
     # Catches https://bitbucket.org/yougov/velociraptor/issue/10/
     url = "ssh://hg@bitbucket.org/yougov/velociraptor "
