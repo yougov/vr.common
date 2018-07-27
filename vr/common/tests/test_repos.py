@@ -135,6 +135,13 @@ def test_git_detached_tag():
         assert r.version.startswith('1418411')
 
 
+def test_diverged_branch():
+    with tmprepo('git_python_app.tar.gz', 'git') as r:
+        _git_config()
+        r.update('master')
+        assert r.version.startswith('9913c8a')
+
+
 def test_basename_trailing_space():
     # Catches https://bitbucket.org/yougov/velociraptor/issue/10/
     url = "ssh://hg@bitbucket.org/yougov/velociraptor "
