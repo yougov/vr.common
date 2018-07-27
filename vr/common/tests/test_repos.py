@@ -1,7 +1,5 @@
 import os
 
-import pytest
-
 from vr.common import repo
 from vr.common.utils import tmpdir, run
 from vr.common.tests import tmprepo
