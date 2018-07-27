@@ -2,10 +2,12 @@
 import os
 import re
 import logging
+import contextlib
 
 from six.moves import urllib
 
 import requests
+from vr.common import utils
 from vr.common.utils import chdir, run
 
 
@@ -134,9 +136,10 @@ class Repo(object):
         self.run('git fetch --tags')
         # Checkout the rev we want
         self.run('git checkout {}'.format(rev))
-        # Pull latest changes, failing if it can't avoid merge
-        # commits (git pull also pulls relevant tags).
-        self.run('git pull --ff-only {} {}'.format(remote, rev))
+        # reset working state to the origin (only relevant to
+        # branches, so suppress errors).
+        with contextlib.suppress(utils.CommandException):
+            self.run('git reset --hard {remote}/{rev}'.format(**locals()))
 
     @property
     def basename(self):
