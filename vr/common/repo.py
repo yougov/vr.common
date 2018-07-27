@@ -2,11 +2,12 @@
 import os
 import re
 import logging
-import contextlib
 
 from six.moves import urllib
 
 import requests
+import contextlib2
+
 from vr.common import utils
 from vr.common.utils import chdir, run
 
@@ -138,7 +139,7 @@ class Repo(object):
         self.run('git checkout {}'.format(rev))
         # reset working state to the origin (only relevant to
         # branches, so suppress errors).
-        with contextlib.suppress(utils.CommandException):
+        with contextlib2.suppress(utils.CommandException):
             self.run('git reset --hard {remote}/{rev}'.format(**locals()))
 
     @property
