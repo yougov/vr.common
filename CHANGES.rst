@@ -1,7 +1,15 @@
+5.4.2
+=====
+
+Fix regressions in 5.4.1 where short hashes and detached tags
+were no longer suitable revisions for Repo.update.
+
 5.4.1
 =====
 
 Fix issue with git-pulling revisions.
+
+Allow "rev" to be None, in which case, default to master or tip.
 
 5.4
 ===
