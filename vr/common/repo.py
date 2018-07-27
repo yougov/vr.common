@@ -131,7 +131,7 @@ class Repo(object):
         # Assume origin is called 'origin'.
         remote = 'origin'
         # Get all refs first
-        self.run('git fetch')
+        self.run('git fetch --tags')
         # Checkout the rev we want
         self.run('git checkout {}'.format(rev))
         # Pull latest changes, failing if it can't avoid merge
