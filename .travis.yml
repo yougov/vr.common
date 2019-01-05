@@ -1,10 +1,11 @@
-dist: trusty
+dist: xenial
 sudo: false
 language: python
 
 python:
 - 2.7
-- &latest_py3 3.6
+- 3.6
+- &latest_py3 3.7
 
 jobs:
   fast_finish: true
@@ -12,18 +13,13 @@ jobs:
   - stage: deploy
     if: tag IS present
     python: *latest_py3
-    install: skip
-    script: skip
-    deploy:
-      provider: pypi
-      on:
-        tags: true
-        all_branches: true
-      user: jaraco
-      password:
-        secure: YMmZ2GVG0AbDyyOzCkiExItPLen/nusgbigAe/0Dzn3G3b1NNM0nCQ24WnBFBLsdREo8Uk9mCEPXxxegkK3Ksqmv2tL35mM6dpY+i9BFTz68A2vlYaYXqx23vpyQ7kXoOy6GF8ZX0b8uSmBEuIOfjThd7Qv5FqRy97KUBo2LGdGz310SEsno/VCGD8UfrdEdBc6Jq/l6cqlV9CLc2QyE6bfq/3Ss6voX4b2qJhq+JSyi0YIdCPRjckKyyUkXWcElmFvh57YJVZZSXa7m0sljjlrkf1gIwjsWmJLirK/mXEfST4TowyQd3qYjh6DvMJOuPtTrtd8P9cTEGB+1kXMXHVI/oQvUVikq7BYm1ypqTFTFcO8vv9KClocGCLyspedZ62kPM+wuStL4lHOJnXIR3hQeFAc2QAs2S1orH2v8iiB2bhf7B/ySDHyCDseL/Z6FwHjgloYBIpu9C9f0ptYH/QszD7SLE+5Vq2QoG4QQ1kuEHo7YZt5akmQQJVL79uibgRDP1yOA+vSMO6s4pApJla23GU5WKyy9yeTZN4DgCgIb1j8X0KiJO8kCrf8CD3Y87K3ceJ7kSk6z+r8oK+/I/vA/gpDJVBR139O3Ig1OHiouLriZOTtBVnp3RZFVXU/2SC9KmMSQe+O+Ytse2/YZjqrnnvh7/31tf6ahe/aeiZ4=
-      distributions: dists
-      skip_cleanup: true
+    before_script: skip
+    env:
+    - TWINE_USERNAME=jaraco
+    # TWINE_PASSWORD
+    - secure: E8/OSLtEa/hRnYUy2IJvT0LgLx0iqMPP7NN6hobNzzQz2XNhWlQms5fkiKKoT8t1iZ6GFK7aQBpb9ntbERkD5oUoedRHp6yMfiUvhDLc7wxWMtZwiyOQoR7Rif3VUn7tee6zbhGqMZbIkv5QT4YZzPOuPfplnZmQvY7XaNfRJ9t116F2OZTznaa+cz3Rgz1A8UUJu7fI/TTcBfC5iMov3mnuMt1LEjnYxmQ2bPdaP7Z6Tkp77vFP8t7lGDnD/X8YZev++hHwDdNo5Uh4Vwxk5q5bz+y0IQwtDWW1ndwWbQcHk6/sJj4ePjPsVfH6SknX8tHnUXJ6pj8AicxkO4Id/9l2omE7f+drZQ2R3kuC0HjavgVqHU+qDp9mBMhjXP78v/ArfSONy6muL1zjdVwWKB36bOvWqu9IO9C5opVrmPnHaIDMjcALyagFF461Dyb+prvxh+6bp8+usuhL7Auy20qR7503C/80rF0p6BvddViTiUqn7cituZyVOEL0kLjQAdxLiU9hKK7JQSSF3lvHyg/RHd9ezdrlrB5oNwiuoTVB5mFiYhM13HNwhZBKJIBoA0CYPy3i+keN1B0Q6jIaO8WngkLBPe3v+K4OysV2dDIwEMKMIaoFbhQyzNjJVuDDQWdvkX6Bjus/Gk45jqL4+wjxyzGt8zm+SSCMZool+os=
+    - TOX_TESTENV_PASSENV="TWINE_USERNAME TWINE_PASSWORD"
+    script: tox -e release
 
 notifications:
   slack:
