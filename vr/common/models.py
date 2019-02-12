@@ -36,8 +36,6 @@ except ImportError:
         def get_password(*args, **kwargs):
             return None
 
-from vr.common.utils import parse_redis_url
-
 log = logging.getLogger(__name__)
 
 SUPERVISOR_RPC_TIMEOUT_SECS = 10
@@ -138,8 +136,7 @@ class Host(object):
         if not redis_spec:
             return
         if isinstance(redis_spec, six.string_types):
-            redis_params = parse_redis_url(redis_spec)
-            return redis.StrictRedis(**redis_params)
+            return redis.StrictRedis.from_url(redis_spec)
         # assume any other value is a valid instance
         return redis_spec
 
