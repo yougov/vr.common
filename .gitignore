@@ -5,3 +5,4 @@ TAGS
 .tox/
 .cache/
 .pytest_cache/
+/pip-wheel-metadata

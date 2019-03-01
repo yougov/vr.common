@@ -11,6 +11,7 @@ import errno
 import textwrap
 import contextlib
 import functools
+import warnings
 from pkg_resources import parse_version
 
 try:
@@ -140,6 +141,9 @@ def parse_redis_url(url):
     Given a url like redis://localhost:6379/0, return a dict with host, port,
     and db members.
     """
+    warnings.warn(
+        "Use redis.StrictRedis.from_url instead", DeprecationWarning,
+        stacklevel=2)
     parsed = urllib.parse.urlsplit(url)
     return {
         'host': parsed.hostname,
