@@ -1,5 +1,4 @@
 from datetime import datetime
-from collections import Iterable
 import collections
 import copy
 import functools
@@ -11,6 +10,11 @@ import os
 import re
 import socket
 import time
+
+try:
+    from collections import abc
+except ImportError:
+    import collections as abc
 
 from six.moves import urllib, xmlrpc_client, range
 
@@ -499,7 +503,7 @@ class ProcHostFilter(Filter):
     getter = operator.itemgetter('host')
 
 
-class QueryResult(Iterable):
+class QueryResult(abc.Iterable):
 
     def __init__(self, vr, url, params):
         self.vr = vr
