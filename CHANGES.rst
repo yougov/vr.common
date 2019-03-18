@@ -1,3 +1,13 @@
+6.1.1
+=====
+
+Fix DeprecationWarning in models.
+
+6.1
+===
+
+#6: Add support for authenticated Redis connections.
+
 6.0
 ===
 
