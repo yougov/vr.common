@@ -70,7 +70,7 @@ def get_slugignores(root, fname='.slugignore'):
     """
     try:
         with open(os.path.join(root, fname)) as f:
-            return [l.rstrip('\n') for l in f]
+            return [line.rstrip('\n') for line in f]
     except IOError:
         return []
 

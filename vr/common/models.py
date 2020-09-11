@@ -48,8 +48,8 @@ SUPERVISOR_RPC_N_RETRIES = 2
 
 class TimeoutTransport(xmlrpc_client.Transport):
 
-    def __init__(self, timeout=SUPERVISOR_RPC_TIMEOUT_SECS, *l, **kw):
-        xmlrpc_client.Transport.__init__(self, *l, **kw)
+    def __init__(self, timeout=SUPERVISOR_RPC_TIMEOUT_SECS, *t, **kw):
+        xmlrpc_client.Transport.__init__(self, *t, **kw)
         self.timeout = timeout
 
     def make_connection(self, *args, **kwargs):

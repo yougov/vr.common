@@ -12,60 +12,12 @@ def _exists_exe(exe):
     return find_executable(exe) is not None
 
 
-skipif_nohg = pytest.mark.skipif(not _exists_exe('hg'), reason="no hg")
 skipif_nogit = pytest.mark.skipif(not _exists_exe('git'), reason="no hg")
 
 
 def _git_config():
     run('git config user.email "you@example.com"')
     run('git config --global user.name "Your Name"')
-
-
-@skipif_nohg
-class TestHg(object):
-
-    def test_hg_folder_detection(self):
-        with tmpdir():
-            folder = os.path.abspath('.hg')
-            run('mkdir -p %s' % folder)
-            assert repo.guess_folder_vcs(os.getcwd()) == 'hg'
-
-    # TODO: Run local git/hg servers so we don't have to call out over
-    # the network during tests.
-    def test_hg_clone(self):
-        url = 'https://bitbucket.org/btubbs/vr_python_example'
-        with tmpdir():
-            hgrepo = repo.Repo('hgrepo', url, 'hg')
-            hgrepo.clone()
-            assert hgrepo.get_url() == url
-
-    def test_hg_update_norev(self):
-        with tmprepo('hg_python_app.tar.gz', 'hg') as r:
-            # rev defaults to tip
-            r.update()
-            assert r.version == '802efadda217'
-
-    def test_hg_get_version(self):
-        rev = '496e15fd973f'
-        with tmprepo('hg_python_app.tar.gz', 'hg') as r:
-            r.update(rev)
-            assert r.version == rev
-
-    def test_hg_update(self):
-        newrev = '13b6ce1e234a'
-        oldrev = '496e15fd973f'
-        with tmprepo('hg_python_app.tar.gz', 'hg') as r:
-            r.update(newrev)
-            f = 'newfile'
-            assert os.path.isfile(f)
-
-            r.update(oldrev)
-            assert not os.path.isfile(f)
-
-    def test_basename_trailing_space(self):
-        # Catches https://bitbucket.org/yougov/velociraptor/issue/10/
-        url = "ssh://hg@bitbucket.org/yougov/velociraptor "
-        assert repo.basename(url) == 'velociraptor'
 
 
 @skipif_nogit
