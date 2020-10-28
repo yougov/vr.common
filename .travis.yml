@@ -28,7 +28,9 @@ notifications:
 cache: pip
 
 install:
+- pip install pyrsistent==0.16.0
 - pip install tox tox-venv
+
 
 before_script:
   # Disable IPv6. Ref travis-ci/travis-ci#8361
