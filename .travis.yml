@@ -28,7 +28,6 @@ notifications:
 cache: pip
 
 install:
-- pip install pyrsistent==0.16.0
 - pip install tox tox-venv
 
 
