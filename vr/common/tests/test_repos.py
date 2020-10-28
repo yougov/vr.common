@@ -15,9 +15,11 @@ def _exists_exe(exe):
 skipif_nohg = pytest.mark.skipif(not _exists_exe('hg'), reason="no hg")
 skipif_nogit = pytest.mark.skipif(not _exists_exe('git'), reason="no hg")
 
+
 def _git_config():
     run('git config user.email "you@example.com"')
     run('git config --global user.name "Your Name"')
+
 
 @pytest.mark.xfail
 class TestHg(object):
